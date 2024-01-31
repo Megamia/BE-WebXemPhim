@@ -1,1 +1,2 @@
-"# BE" 
+- cd tới file index.js
+- node index.js hoặc node <đường dẫn>
