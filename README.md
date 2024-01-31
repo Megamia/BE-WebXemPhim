@@ -1,2 +1,2 @@
-cd tới file index.js
-node index.js hoặc node <đường dẫn>
+- cd tới file index.js
+- node index.js hoặc node <đường dẫn>
