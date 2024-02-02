@@ -1,5 +1,3 @@
-// config/dbConfig.js
-
 const db = {
     user: 'sa',
     password: 'sa',
