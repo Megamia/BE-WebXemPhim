@@ -21,10 +21,7 @@ app.use(session({
     maxAge: 24 * 60 * 60 * 1000 
   }
 }));
-app.use(cors({
-  origin: 'http://localhost:4000', 
-  credentials: true,
-}));
+app.use(cors());
 app.use(express.json());
 
 app.use('/api/login', loginRouter);
