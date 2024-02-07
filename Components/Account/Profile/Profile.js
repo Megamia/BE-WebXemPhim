@@ -1,50 +1,84 @@
 const express = require('express');
 const router = express.Router();
-const sql = require('mssql');
+const jwt = require('jsonwebtoken');
+const secretKey = 'as63d1265qw456q41rf32ds1g85456e1r32w1r56qr41_qwe1qw56e42a30s0';
+const fs = require('fs');
 const dbConnection = require('../../../Config/dbConnection');
+const sql = require('mssql'); 
 
-router.get('/', async (req, res) => {
+// Middleware xác thực token
+const authenticateToken = (req, res, next) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({ error: 'Chưa đăng nhập' });
-    }
+    const tokensData = fs.readFileSync('tokens.json', 'utf8');
+    const tokens = JSON.parse(tokensData);
 
-    const username = req.session.user.username;
+    if (tokens && tokens.token) {
+      const token = tokens.token;
+      jwt.verify(token, secretKey, (err, decoded) => {
+        if (err) {
+          return res.status(403).json({ message: 'Unauthorized' });
+        }
+        req.user = decoded;
+        next();
+      });
+    } else {
+      res.status(401).json({ message: 'Token not provided' });
+    }
+  } catch (error) {
+    console.error('Error reading tokens file:', error);
+    res.status(500).json({ message: 'Error reading tokens file' });
+  }
+};
+
+// Endpoint GET để lấy thông tin người dùng
+router.get('/', authenticateToken, async (req, res) => {
+  try {
+    await dbConnection(); // Kết nối đến cơ sở dữ liệu
+
+    const userInfo = req.user; // Lấy thông tin người dùng từ token
+    const { username } = userInfo; // Sử dụng username từ userInfo để thực hiện truy vấn
 
     const pool = await sql.connect(dbConnection);
-    const selectQuery = 'SELECT * FROM Users WHERE username = @username';
-    const result = await pool.request().input('username', sql.NVarChar, username).query(selectQuery);
+    
+    // Thực hiện truy vấn SQL để lấy thông tin người dùng từ bảng User
+    const result = await pool.request()
+      .query(`SELECT * FROM Users WHERE username = '${username}'`);
 
-    const userInfo = result.recordset[0];
-
-    res.status(200).json(userInfo);
+    if (result.recordset.length > 0) {
+      const userInfoFromDB = result.recordset[0];
+      res.json({ message: 'User information has been retrieved successfully', userInfo: userInfoFromDB });
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
   } catch (error) {
-    console.error('Error querying the database:', error.message);
-
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('Error:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
-router.post('/', async (req, res) => {
+// Endpoint PUT để cập nhật thông tin người dùng
+// Endpoint POST để cập nhật thông tin người dùng
+router.post('/', authenticateToken, async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.status(401).json({ error: 'Chưa đăng nhập' });
-    }
+    await dbConnection(); // Kết nối đến cơ sở dữ liệu
 
-    const username = req.session.user.username;
-    const { fullname, email, phone } = req.body;
+    const userInfo = req.user; // Lấy thông tin người dùng từ token
+    const { username } = userInfo; // Sử dụng username từ userInfo để thực hiện truy vấn
+    const { fullname, email, phone } = req.body; // Lấy thông tin cập nhật từ yêu cầu
 
-    // Cập nhật thông tin người dùng trong cơ sở dữ liệu
     const pool = await sql.connect(dbConnection);
-    const updateQuery = `UPDATE Users SET fullname = '${fullname}', email = '${email}', phone = '${phone}' WHERE username = '${username}'`;
-    await pool.request().query(updateQuery);
+    
+    // Thực hiện câu lệnh UPDATE để cập nhật thông tin người dùng
+    await pool.request()
+      .query(`UPDATE Users SET fullname = '${fullname}', email = '${email}', phone = '${phone}' WHERE username = '${username}'`);
 
-    res.status(200).json({ message: 'Cập nhật thông tin thành công' });
+    // Trả về thông báo thành công
+    res.json({ message: 'User information has been updated successfully' });
   } catch (error) {
-    console.error('Error querying the database:', error.message);
-
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('Error:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
+
 
 module.exports = router;

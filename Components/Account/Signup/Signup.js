@@ -3,10 +3,9 @@ const router = express.Router();
 const sql = require('mssql');
 const dbConnection = require('../../../Config/dbConnection');
 
-// Middleware function
 router.post('/', async (req, res) => {
   try {
-    await dbConnection(); // Kết nối cơ sở dữ liệu
+    await dbConnection(); 
 
     const { username, fullname, email, password, phone } = req.body;
     const pool = await sql.connect(dbConnection);

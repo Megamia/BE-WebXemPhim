@@ -1,33 +1,37 @@
 const express = require('express');
 const router = express.Router();
-const sql = require('mssql');
+const jwt = require('jsonwebtoken');
+const sql = require('mssql'); 
+const secretKey = 'as63d1265qw456q41rf32ds1g85456e1r32w1r56qr41_qwe1qw56e42a30s0'; 
 const dbConnection = require('../../../Config/dbConnection');
-
+const fs =require('fs');
 router.post('/', async (req, res) => {
   try {
+
     await dbConnection();
-
+    
     const { username, password } = req.body;
-    const pool = await sql.connect(dbConnection);
+    const pool = await sql.connect(dbConnection); 
 
-    const loginUserQuery = 'SELECT * FROM Users WHERE username = @username AND password = @password';
     const request = pool.request();
-    request.input('username', sql.VarChar, username);
-    request.input('password', sql.VarChar, password);
-    const loginUserResult = await request.query(loginUserQuery);
+    request.input('username', sql.NVarChar, username);
+    request.input('password', sql.NVarChar, password);
 
-    if (loginUserResult.recordset.length === 0) {
-      return res.status(401).json({ error: 'Tên đăng nhập hoặc mật khẩu không đúng' });
+    const query = 'SELECT * FROM Users WHERE username = @username AND password = @password';
+    const result = await request.query(query);
+    const user = result.recordset[0];
+
+    if (user) {
+      req.session.username = user.username;
+      const token = jwt.sign({ username: user.username, userId: user.id }, secretKey, { expiresIn: '1h' });
+      // console.log("tokens: " , token);
+      fs.writeFileSync('tokens.json', JSON.stringify({ token: token }));
+      res.status(200).json({ token: token });
+    } else {
+      res.status(401).json({ message: 'Invalid username or password.' });
     }
-
-    const user = loginUserResult.recordset[0];
-
-    req.session.user = user;
-
-    res.status(200).json({ message: 'Đăng nhập thành công', user });
   } catch (error) {
-    console.log('Error querying the database:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ message: 'Error connecting to SQL Server' });
   }
 });
 
