@@ -1,0 +1,42 @@
+[
+  {
+    "userid": 1,
+    "username": "New Username",
+    "fullname": "New FullName",
+    "email": "newemail@example.com",
+    "password": "1",
+    "phone": "New Phone"
+  },
+  {
+    "userid": 2,
+    "username": "2",
+    "fullname": "luudanhdat",
+    "email": "newemail@example.com",
+    "password": "2",
+    "phone": "123"
+  },
+  {
+    "userid": 3,
+    "username": "2",
+    "fullname": "luudanhdat",
+    "email": "newemail@example.com",
+    "password": "3",
+    "phone": "123"
+  },
+  {
+    "userid": 4,
+    "username": "1",
+    "fullname": "1",
+    "email": "1@gmail.com",
+    "password": "1",
+    "phone": "1"
+  },
+  {
+    "userid": 1002,
+    "username": "3",
+    "fullname": "3",
+    "email": "3",
+    "password": "3",
+    "phone": "3"
+  }
+]
