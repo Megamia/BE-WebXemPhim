@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 const loginRouter = require('./Components/Account/Login/Login');
 const signupRouter = require('./Components/Account/Signup/Signup');
 const profileRouter = require('./Components/Account/Profile/Profile');
+const UserMNGMRouter =require('./Components/Admin/UserMNGM/UserMNGM');
 const app = express();
 const port = 4000;
 
@@ -26,6 +27,7 @@ app.use(express.json());
 app.use('/api/login', loginRouter);
 app.use('/api/signup', signupRouter);
 app.use('/api/profile', profileRouter);
+app.use('/api/UserMNGM', UserMNGMRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

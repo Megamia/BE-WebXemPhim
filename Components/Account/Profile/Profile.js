@@ -7,7 +7,6 @@ const dbConnection = require('../../../Config/dbConnection');
 const sql = require('mssql');
 const { Console } = require('console');
 
-// Middleware xác thực token
 const authenticateToken = (req, res, next) => {
   try {
     const tokensData = fs.readFileSync('tokens.json', 'utf8');
@@ -31,17 +30,15 @@ const authenticateToken = (req, res, next) => {
   }
 };
 
-// Endpoint GET để lấy thông tin người dùng
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    await dbConnection(); // Kết nối đến cơ sở dữ liệu
+    await dbConnection(); 
 
-    const userInfo = req.user; // Lấy thông tin người dùng từ token
-    const { username } = userInfo; // Sử dụng username từ userInfo để thực hiện truy vấn
+    const userInfo = req.user; 
+    const { username } = userInfo; 
 
     const pool = await sql.connect(dbConnection);
 
-    // Thực hiện truy vấn SQL để lấy thông tin người dùng từ bảng User
     const result = await pool.request()
       .query(`SELECT * FROM Users WHERE username = '${username}'`);
 
@@ -61,22 +58,18 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
-// Endpoint PUT để cập nhật thông tin người dùng
-// Endpoint POST để cập nhật thông tin người dùng
 router.post('/', authenticateToken, async (req, res) => {
   try {
-    await dbConnection(); // Kết nối đến cơ sở dữ liệu
+    await dbConnection(); 
 
-    const userInfo = req.user; // Lấy thông tin người dùng từ token
-    const { username, fullname, email, phone } = req.body; // Lấy thông tin cập nhật từ yêu cầu
+    const userInfo = req.user;
+    const { username, fullname, email, phone } = req.body; 
 
-    // Đọc dữ liệu từ user.json để lấy userid
     const userData = fs.readFileSync('user.json', 'utf8');
     const { userid } = JSON.parse(userData);
 
     const pool = await sql.connect(dbConnection);
 
-    // Thực hiện câu lệnh UPDATE để cập nhật thông tin người dùng
     await pool.request()
       .input('username', sql.NVarChar, username)
       .input('fullname', sql.NVarChar, fullname)
@@ -85,15 +78,12 @@ router.post('/', authenticateToken, async (req, res) => {
       .input('userid', sql.Int, userid)
       .query('UPDATE Users SET username = @username, fullname = @fullname, email = @email, phone = @phone WHERE userid = @userid');
 
-    // Lấy thông tin người dùng mới từ cơ sở dữ liệu sau khi cập nhật
     const updatedUserInfo = await pool.request()
       .input('userid', sql.Int, userid)
       .query('SELECT * FROM Users WHERE userid = @userid');
 
-    // Ghi dữ liệu mới vào user.json
     fs.writeFileSync('user.json', JSON.stringify(updatedUserInfo.recordset[0]));
 
-    // Trả về thông báo thành công
     res.json({ message: 'User information has been updated successfully' });
   } catch (error) {
     console.error('Error:', error);
