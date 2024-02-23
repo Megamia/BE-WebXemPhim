@@ -7,23 +7,18 @@ const dbConnection = require('../../../Config/dbConnection');
 const fs =require('fs');
 router.post('/', async (req, res) => {
   try {
-
     await dbConnection();
-    
     const { username, password } = req.body;
     const pool = await sql.connect(dbConnection); 
-
     const request = pool.request();
     request.input('username', sql.NVarChar, username);
     request.input('password', sql.NVarChar, password);
-
     const query = 'SELECT * FROM Users WHERE username = @username AND password = @password';
     const result = await request.query(query);
     const user = result.recordset[0];
-
     if (user) {
       req.session.username = user.username;
-      const token = jwt.sign({ username: user.username, userId: user.id }, secretKey, { expiresIn: '1h' });
+      const token = jwt.sign({ username: user.username, userId: user.userid }, secretKey, { expiresIn: '1h' });
       // console.log("tokens: " , token);
       fs.writeFileSync('tokens.json', JSON.stringify({ token: token }));
       res.status(200).json({ token: token });

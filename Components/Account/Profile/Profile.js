@@ -61,13 +61,8 @@ router.get('/', authenticateToken, async (req, res) => {
 router.post('/', authenticateToken, async (req, res) => {
   try {
     await dbConnection(); 
-
-    const userInfo = req.user;
     const { username, fullname, email, phone } = req.body; 
-
-    const userData = fs.readFileSync('user.json', 'utf8');
-    const { userid } = JSON.parse(userData);
-
+    const { userId } = req.user;
     const pool = await sql.connect(dbConnection);
 
     await pool.request()
@@ -75,22 +70,14 @@ router.post('/', authenticateToken, async (req, res) => {
       .input('fullname', sql.NVarChar, fullname)
       .input('email', sql.NVarChar, email)
       .input('phone', sql.NVarChar, phone)
-      .input('userid', sql.Int, userid)
+      .input('userid', sql.Int, userId)
       .query('UPDATE Users SET username = @username, fullname = @fullname, email = @email, phone = @phone WHERE userid = @userid');
 
-    const updatedUserInfo = await pool.request()
-      .input('userid', sql.Int, userid)
-      .query('SELECT * FROM Users WHERE userid = @userid');
-
-    fs.writeFileSync('user.json', JSON.stringify(updatedUserInfo.recordset[0]));
-
-    res.json({ message: 'User information has been updated successfully' });
+      res.json({ message: 'User information has been updated successfully' });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-
-
 
 module.exports = router;
