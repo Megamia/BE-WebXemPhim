@@ -8,6 +8,7 @@ const profileRouter = require('./Components/Account/Profile/Profile');
 const UserMNGMRouter =require('./Components/Admin/UserMNGM/UserMNGM');
 const newmovieRouter =require('./Components/Movie/ListMovie/Newmovie');
 const CategoryMovieRouter = require('./Components/Movie/ListMovie/CategoryMovie');
+const TypeMovieRouter = require('./Components/Movie/ListMovie/TypeMovie');
 const app = express();
 const port = 4000;
 
@@ -32,7 +33,7 @@ app.use('/api/profile', profileRouter);
 app.use('/api/UserMNGM', UserMNGMRouter);
 app.use('/api/Movie', newmovieRouter);
 app.use('/api/category-movie', CategoryMovieRouter);
-
+app.use('/api/type-movie', TypeMovieRouter);
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
