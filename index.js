@@ -10,6 +10,7 @@ const newmovieRouter =require('./Components/Movie/ListMovie/Newmovie');
 const CategoryMovieRouter = require('./Components/Movie/ListMovie/CategoryMovie');
 const TypeMovieRouter = require('./Components/Movie/ListMovie/TypeMovie');
 const DetailMovieRouter = require('./Components/Movie/DetailMovie/DetailMovie');
+const DetailVideoRouter = require('./Components/Movie/DetailMovie/DetailVideo');
 const app = express();
 const port = 4000;
 
@@ -36,6 +37,8 @@ app.use('/api/Movie', newmovieRouter);
 app.use('/api/category-movie', CategoryMovieRouter);
 app.use('/api/type-movie', TypeMovieRouter);
 app.use('/api/phim', DetailMovieRouter);
+app.use('/api/video', DetailVideoRouter);
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
