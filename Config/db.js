@@ -1,7 +1,7 @@
 const db = {
   user: 'sa',
   password: 'sa',
-  server: 'VIETANH',
+  server: '26.227.56.79',
   database: 'WebXemPhim',
   port: 1433,
   options: {

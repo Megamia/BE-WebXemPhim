@@ -10,6 +10,10 @@ router.post('/', async (req, res) => {
     const { username, fullname, email, password, phone } = req.body;
     const pool = await sql.connect(dbConnection);
 
+    if (!username.trim() || !password.trim()) {
+      return res.status(400).json({ error: 'Tên người dùng và mật khẩu không được để trống' });
+    }
+
     const checkUserQuery = `SELECT * FROM Users WHERE username = '${username}'`;
     const checkUserResult = await pool.request().query(checkUserQuery);
 
