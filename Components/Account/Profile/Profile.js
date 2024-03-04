@@ -32,10 +32,10 @@ const authenticateToken = (req, res, next) => {
 
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    await dbConnection(); 
+    await dbConnection();
 
-    const userInfo = req.user; 
-    const { username } = userInfo; 
+    const userInfo = req.user;
+    const { username } = userInfo;
 
     const pool = await sql.connect(dbConnection);
 
@@ -60,8 +60,8 @@ router.get('/', authenticateToken, async (req, res) => {
 
 router.post('/', authenticateToken, async (req, res) => {
   try {
-    await dbConnection(); 
-    const { username, fullname, email, phone } = req.body; 
+    await dbConnection();
+    const { username, fullname, email, password, phone } = req.body;
     const { userId } = req.user;
     const pool = await sql.connect(dbConnection);
 
@@ -69,11 +69,12 @@ router.post('/', authenticateToken, async (req, res) => {
       .input('username', sql.NVarChar, username)
       .input('fullname', sql.NVarChar, fullname)
       .input('email', sql.NVarChar, email)
+      .input('password', sql.NVarChar, password)
       .input('phone', sql.NVarChar, phone)
       .input('userid', sql.Int, userId)
-      .query('UPDATE Users SET username = @username, fullname = @fullname, email = @email, phone = @phone WHERE userid = @userid');
+      .query('UPDATE Users SET username = @username, fullname = @fullname, email = @email, password = @password, phone = @phone WHERE userid = @userid');
 
-      res.json({ message: 'User information has been updated successfully' });
+    res.json({ message: 'User information has been updated successfully' });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ message: 'Internal server error' });
