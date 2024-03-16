@@ -3,29 +3,29 @@ const router = express.Router();
 const sql = require('mssql');
 const dbConnection = require('../../../Config/dbConnection');
 
-router.get('/:videoId', async (req, res) => {
+router.get('/:movieId/:videoId', async (req, res) => {
   try {
-    const { videoId } = req.params;
+    const { videoId,movieId } = req.params;
     await dbConnection();
     const pool = await sql.connect(dbConnection);
     const request = pool.request();
     const queryVideo= `
       SELECT v.*
       FROM Video v
-      WHERE v.videoid = @videoId
+      WHERE v.videoid = @videoId and v.movieid = @movieId
     `;
     const queryListVideo = `
-      SELECT v1.videoid, v1.videoname, v1.videourl
-      FROM Video v1
-      INNER JOIN Video v2 ON v1.movieid = v2.movieid
-      WHERE v2.videoid = @videoid
+      SELECT v.videoid, v.videoname
+      FROM Video v
+      INNER JOIN Movie m ON m.movieid = v.movieid
+      WHERE m.movieid = @movieId
     `;
     const queryMovie = `
       SELECT m.*
       FROM Movie m
-      INNER JOIN Video v ON v.movieid = m.movieid
-      WHERE v.videoid = @videoid
+      WHERE m.movieid = @movieId
     `;
+    request.input('movieId', sql.Int, movieId);
     request.input('videoId', sql.Int, videoId);
     const movieResult = await request.query(queryMovie);
     const listvideoResult = await request.query(queryListVideo);

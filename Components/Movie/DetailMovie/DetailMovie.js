@@ -29,7 +29,7 @@ router.get('/:movieId', async (req, res) => {
       WHERE m.movieid = @movieId
     `;
     const queryVideo = `
-      SELECT v.videoid, v.videoname, v.videourl
+      SELECT v.videoid, v.videoname
       FROM Video v
       INNER JOIN Movie m ON m.movieid = v.movieid
       WHERE m.movieid = @movieId
