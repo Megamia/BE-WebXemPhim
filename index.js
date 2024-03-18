@@ -11,7 +11,8 @@ const CategoryMovieRouter = require('./Components/Movie/ListMovie/CategoryMovie'
 const TypeMovieRouter = require('./Components/Movie/ListMovie/TypeMovie');
 const DetailMovieRouter = require('./Components/Movie/DetailMovie/DetailMovie');
 const DetailVideoRouter = require('./Components/Movie/DetailMovie/DetailVideo');
-const UpdateViewsRouter = require('./Components/Movie/DetailMovie/UpdateViews')
+const UpdateViewsRouter = require('./Components/Movie/DetailMovie/UpdateViews');
+const DonateRouter = require('./Components/Donate/Donate');
 
 const app = express();
 const port = 4000;
@@ -41,6 +42,7 @@ app.use('/api/the-loai', TypeMovieRouter);
 app.use('/api/phim', DetailMovieRouter);
 app.use('/api/phim', DetailVideoRouter);
 app.use('/api/views', UpdateViewsRouter);
+app.use('/api/donate', DonateRouter);
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
