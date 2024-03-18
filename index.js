@@ -13,6 +13,7 @@ const DetailMovieRouter = require('./Components/Movie/DetailMovie/DetailMovie');
 const DetailVideoRouter = require('./Components/Movie/DetailMovie/DetailVideo');
 const UpdateViewsRouter = require('./Components/Movie/DetailMovie/UpdateViews');
 const DonateRouter = require('./Components/Donate/Donate');
+const FindRouter = require('./Components/Movie/Find/Find');
 
 const app = express();
 const port = 4000;
@@ -43,6 +44,8 @@ app.use('/api/phim', DetailMovieRouter);
 app.use('/api/phim', DetailVideoRouter);
 app.use('/api/views', UpdateViewsRouter);
 app.use('/api/donate', DonateRouter);
+app.use('/api/find', FindRouter);
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
