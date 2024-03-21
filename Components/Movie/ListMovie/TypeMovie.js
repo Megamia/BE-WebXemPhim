@@ -10,7 +10,8 @@ router.get('/:typeUrl', async (req, res) => {
     const pool = await sql.connect(dbConnection); 
     const request = pool.request();
     const query = `
-      SELECT m.movieid,m.moviename, m.views,m.poster,v.videoname
+      SELECT m.movieid,m.moviename, m.views,m.poster,v.videoname,
+      (SELECT CAST(AVG(value) AS DECIMAL(10, 1)) FROM Rating WHERE movieid = m.movieid) AS average_rating
       FROM Movie m
       INNER JOIN list_type lt ON lt.movieid = m.movieid
       INNER JOIN type t ON t.typeid = lt.typeid

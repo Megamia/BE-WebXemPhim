@@ -3,10 +3,8 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const secretKey =
   "as63d1265qw456q41rf32ds1g85456e1r32w1r56qr41_qwe1qw56e42a30s0";
-const fs = require("fs");
 const dbConnection = require("../../../Config/dbConnection");
 const sql = require("mssql");
-const { Console } = require("console");
 
 const authenticateToken = (req, res, next) => {
   try {
