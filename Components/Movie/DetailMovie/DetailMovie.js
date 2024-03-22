@@ -1,9 +1,9 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const sql = require('mssql');
-const dbConnection = require('../../../Config/dbConnection');
+const sql = require("mssql");
+const dbConnection = require("../../../Config/dbConnection");
 
-router.get('/:movieId', async (req, res) => {
+router.get("/:movieId", async (req, res) => {
   try {
     const { movieId } = req.params;
     await dbConnection();
@@ -12,29 +12,28 @@ router.get('/:movieId', async (req, res) => {
     const queryMovie = `
       SELECT m.*
       FROM Movie m
-      WHERE m.movieid = @movieId
+      WHERE m.movieid = ${movieId}
     `;
     const queryCategory = `
       SELECT c.*
       FROM category c
       INNER JOIN list_category lc ON lc.categoryid = c.categoryid
       INNER JOIN Movie m ON m.movieid = lc.movieid
-      WHERE m.movieid = @movieId
+      WHERE m.movieid = ${movieId}
     `;
     const queryType = `
       SELECT t.*
       FROM Type t
       INNER JOIN list_type lt ON lt.typeid = t.typeid
       INNER JOIN Movie m ON m.movieid = lt.movieid
-      WHERE m.movieid = @movieId
+      WHERE m.movieid = ${movieId}
     `;
     const queryVideo = `
       SELECT v.videoid, v.videoname
       FROM Video v
       INNER JOIN Movie m ON m.movieid = v.movieid
-      WHERE m.movieid = @movieId
+      WHERE m.movieid = ${movieId}
     `;
-    request.input('movieId', sql.Int, movieId);
     const movieResult = await request.query(queryMovie);
     const categoryResult = await request.query(queryCategory);
     const typeResult = await request.query(queryType);
@@ -43,10 +42,17 @@ router.get('/:movieId', async (req, res) => {
     const categories = categoryResult.recordset;
     const types = typeResult.recordset;
     const videos = videoResult.recordset;
-    res.status(200).json({ movies: movies, categories: categories, types: types, videos: videos});
+    res
+      .status(200)
+      .json({
+        movies: movies,
+        categories: categories,
+        types: types,
+        videos: videos,
+      });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Error connecting to SQL Server' });
+    res.status(500).json({ message: "Error connecting to SQL Server" });
   }
 });
 
