@@ -15,6 +15,7 @@ const UpdateViewsRouter = require('./Components/Movie/DetailMovie/UpdateViews');
 const DonateRouter = require('./Components/Donate/Donate');
 const FindRouter = require('./Components/Movie/Find/Find');
 const RatingRouter = require('./Components/Movie/Activity/MovieRating');
+const hotmovieRouter = require('./Components/Movie/ListMovie/Hotmovie');
 
 const app = express();
 const port = 4000;
@@ -47,6 +48,7 @@ app.use('/api/views', UpdateViewsRouter);
 app.use('/api/donate', DonateRouter);
 app.use('/api/find', FindRouter);
 app.use('/api/rating/', RatingRouter);
+app.use('/api/noi-bat/', hotmovieRouter);
 
 
 app.listen(port, () => {
