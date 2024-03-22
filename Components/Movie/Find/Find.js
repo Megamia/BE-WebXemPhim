@@ -3,8 +3,6 @@ const router = express.Router();
 const sql = require('mssql');
 const dbConnection = require('../../../Config/dbConnection');
 
-// ... import và khai báo khác
-
 router.get('/', async (req, res) => {
   try {
     await dbConnection();
@@ -19,7 +17,8 @@ router.get('/', async (req, res) => {
     `;
     
     if (searchTerm) {
-      query += ` WHERE moviename LIKE '%${searchTerm}%'`;
+      query += ` WHERE moviename LIKE @searchTerm`;
+      request.input('searchTerm', `%${searchTerm}%`);
     }
     
     const result = await request.query(query);
