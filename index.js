@@ -15,7 +15,7 @@ const UpdateViewsRouter = require('./Components/Movie/DetailMovie/UpdateViews');
 const DonateRouter = require('./Components/Donate/Donate');
 const FindRouter = require('./Components/Movie/Find/Find');
 const RatingRouter = require('./Components/Movie/Activity/MovieRating');
-
+const DonateHistoryRouter =require('./Components/Donate/History');
 const app = express();
 const port = 4000;
 
@@ -45,6 +45,7 @@ app.use('/api/phim', DetailMovieRouter);
 app.use('/api/phim', DetailVideoRouter);
 app.use('/api/views', UpdateViewsRouter);
 app.use('/api/donate', DonateRouter);
+app.use('/api/history', DonateHistoryRouter);
 app.use('/api/find', FindRouter);
 app.use('/api/rating/', RatingRouter);
 
