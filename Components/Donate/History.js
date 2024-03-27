@@ -13,16 +13,16 @@ const authenticateToken = (req, res, next) => {
     const token = authHeader && authHeader.split(" ")[1];
 
     if (token == null) {
-      return res.sendStatus(401); // Unauthorized
+      return res.sendStatus(401);
     }
 
     jwt.verify(token, secretKey, (err, decoded) => {
       if (err) {
         console.error("Error verifying token:", err);
-        return res.sendStatus(403); // Forbidden
+        return res.sendStatus(403); 
       }
       req.user = decoded;
-      console.log("Decoded User:", decoded);
+      // console.log("Decoded User:", decoded);
       next();
     });
   } catch (error) {
