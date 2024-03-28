@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
     const searchTerm = req.query.search;
     
     let query = `
-      SELECT moviename
+      SELECT *
       FROM Movie
     `;
     
@@ -22,8 +22,8 @@ router.get('/', async (req, res) => {
     }
     
     const result = await request.query(query);
-    const names = result.recordset;
-    res.status(200).json({ names });
+    const movies = result.recordset;
+    res.status(200).json({ movies });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error connecting to SQL Server' });
