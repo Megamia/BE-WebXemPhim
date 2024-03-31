@@ -15,15 +15,12 @@ const UpdateViewsRouter = require('./Components/Movie/DetailMovie/UpdateViews');
 const DonateRouter = require('./Components/Donate/Donate');
 const FindRouter = require('./Components/Movie/Find/Find');
 const RatingRouter = require('./Components/Movie/Activity/MovieRating');
-<<<<<<< HEAD
 const hotmovieRouter = require('./Components/Movie/ListMovie/Hotmovie');
 const AdminMovieRouter = require('./Components/Admin/Movie/MovieIndex');
 const AdminTypeRouter = require('./Components/Admin/Type/TypeIndex');
 const AdminCategoryRouter = require('./Components/Admin/Category/CategoryIndex');
 
-=======
 const DonateHistoryRouter =require('./Components/Donate/History');
->>>>>>> a766540a3f1df87373f090bec8e68bcae970b34a
 const app = express();
 const port = 4000;
 

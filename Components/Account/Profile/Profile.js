@@ -9,7 +9,7 @@ const sql = require("mssql");
 const authenticateToken = (req, res, next) => {
   try {
     const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1];
+    const token = authHeader && authHeader.split(" ").slice(1)[0];
 
     if (token == null) {
       return res.sendStatus(401);
@@ -43,9 +43,16 @@ router.get("/", authenticateToken, async (req, res) => {
 
     if (result.recordset.length > 0) {
       const userInfoFromDB = result.recordset[0];
-      res.json({
+      const isAdmin = userInfoFromDB["userid"] === 1;
+      // console.log("Userid: "+userInfoFromDB['userid']);
+      // if(isAdmin){
+      //   console.log("IsAdmin");
+      // }else{
+      //   console.log("Not Admin");
+      // }
+      res.status(200).json({
         message: "User information has been retrieved successfully",
-        userInfo: userInfoFromDB,
+        userInfo: { ...userInfoFromDB, userId: userInfoFromDB.userId, isAdmin },
       });
     } else {
       res.status(404).json({ message: "User not found" });
@@ -62,16 +69,19 @@ router.post("/", authenticateToken, async (req, res) => {
     const { username, fullname, email, password, phone } = req.body;
     const { userId } = req.user;
     const pool = await sql.connect(dbConnection);
-    await pool.request()
-      .input('username', sql.NVarChar, username)
-      .input('fullname', sql.NVarChar, fullname)
-      .input('email', sql.NVarChar, email)
-      .input('password', sql.NVarChar, password)
-      .input('phone', sql.NVarChar, phone)
-      .input('userid', sql.Int, userId)
-      .query('UPDATE Users SET username = @username, fullname = @fullname, email = @email, password = @password, phone = @phone WHERE userid = @userid');
+    await pool
+      .request()
+      .input("username", sql.NVarChar, username)
+      .input("fullname", sql.NVarChar, fullname)
+      .input("email", sql.NVarChar, email)
+      .input("password", sql.NVarChar, password)
+      .input("phone", sql.NVarChar, phone)
+      .input("userid", sql.Int, userId)
+      .query(
+        "UPDATE Users SET username = @username, fullname = @fullname, email = @email, password = @password, phone = @phone WHERE userid = @userid"
+      );
 
-    res.json({ message: 'User information has been updated successfully' });
+    res.json({ message: "User information has been updated successfully" });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ message: "Internal server error" });
