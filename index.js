@@ -21,6 +21,9 @@ const AdminTypeRouter = require('./Components/Admin/Type/TypeIndex');
 const AdminCategoryRouter = require('./Components/Admin/Category/CategoryIndex');
 
 const DonateHistoryRouter =require('./Components/Donate/History');
+const DonateHistoryRouter =require('./Components/Donate/History');
+const AdminDonateRouter =require('./Components/Admin/Donate/DonateIndex');
+
 const app = express();
 const port = 4000;
 
@@ -57,6 +60,7 @@ app.use('/api/noi-bat/', hotmovieRouter);
 app.use('/api/admin/movie/', AdminMovieRouter);
 app.use('/api/admin/type/', AdminTypeRouter);
 app.use('/api/admin/category/', AdminCategoryRouter);
+app.use('/api/admin/donate/', AdminDonateRouter);
 
 
 
