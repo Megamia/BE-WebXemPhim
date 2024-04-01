@@ -1,14 +1,110 @@
 const express = require("express");
 const router = express.Router();
+const jwt = require("jsonwebtoken");
 const sql = require("mssql");
 const dbConnection = require("../../../Config/dbConnection");
 
-router.get("/:movieId", async (req, res) => {
+const secretKey =
+  "as63d1265qw456q41rf32ds1g85456e1r32w1r56qr41_qwe1qw56e42a30s0";
+
+const authenticateToken = (req, res, next) => {
   try {
-    const { movieId } = req.params;
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ").slice(1)[0];
+
+    if (token == null) {
+      return res.sendStatus(401);
+    }
+
+    jwt.verify(token, secretKey, (err, decoded) => {
+      if (err) {
+        return res.sendStatus(403);
+      }
+      req.user = decoded;
+      next();
+    });
+  } catch (error) {
+    console.error("Error verifying token:", error);
+    res.status(500).json({ message: "Error verifying token" });
+  }
+};
+
+router.post("/add/:movieId", authenticateToken, async (req, res) => {
+  try {
     await dbConnection();
     const pool = await sql.connect(dbConnection);
     const request = pool.request();
+    const { movieId } = req.params;
+const parsedMovieId = parseInt(movieId, 10);
+    const { userId } = req.user;
+    console.log("movieId: " + parsedMovieId);
+    console.log("userId: " + userId);
+
+    console.log("Lấy được movieid: " + parsedMovieId);
+    const insertQuery = `
+  INSERT INTO List_Follow (movieid, userid) VALUES ('${parsedMovieId}', '${userId}');
+`;
+
+    await pool.request().query(insertQuery);
+
+    res.status(200).json({ message: "Insert successful" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error connecting to SQL Server" });
+  }
+});
+
+router.post("/del/:movieId", authenticateToken, async (req, res) => {
+  try {
+    await dbConnection();
+    const pool = await sql.connect(dbConnection);
+    const request = pool.request();
+    const { movieId } = req.params;
+    const { userId } = req.user;
+    const deleteQuery = `
+  DELETE FROM List_Follow WHERE movieid = '${movieId}' AND userid = '${userId}';
+`;
+    await pool.request().query(deleteQuery);
+
+    res.status(200).json({ message: "Delete successful" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error connecting to SQL Server" });
+  }
+});
+
+router.get("/check/:movieId", authenticateToken, async (req, res) => {
+  try {
+    await dbConnection();
+    const pool = await sql.connect(dbConnection);
+    const { movieId } = req.params;
+    const { userId } = req.user;
+    
+    const checkQuery = `
+      SELECT * FROM List_Follow WHERE movieid = '${movieId}' AND userid = '${userId}';
+    `;
+
+    const result = await pool.request().query(checkQuery);
+
+    if (result.recordset.length > 0) {
+      res.status(200).json({ message: "Already!" });
+    } else {
+      res.status(200).json({ message: "Not followed!" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error connecting to SQL Server" });
+  }
+});
+
+
+router.get("/:movieId", async (req, res) => {
+  try {
+    await dbConnection();
+    const pool = await sql.connect(dbConnection);
+    const request = pool.request();
+    const { movieId } = req.params;
+    // console.log("movieId: " + movieId);
     const queryMovie = `
       SELECT m.*
       FROM Movie m
@@ -42,14 +138,12 @@ router.get("/:movieId", async (req, res) => {
     const categories = categoryResult.recordset;
     const types = typeResult.recordset;
     const videos = videoResult.recordset;
-    res
-      .status(200)
-      .json({
-        movies: movies,
-        categories: categories,
-        types: types,
-        videos: videos,
-      });
+    res.status(200).json({
+      movies: movies,
+      categories: categories,
+      types: types,
+      videos: videos,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error connecting to SQL Server" });
