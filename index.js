@@ -19,7 +19,6 @@ const hotmovieRouter = require('./Components/Movie/ListMovie/Hotmovie');
 const AdminMovieRouter = require('./Components/Admin/Movie/MovieIndex');
 const AdminTypeRouter = require('./Components/Admin/Type/TypeIndex');
 const AdminCategoryRouter = require('./Components/Admin/Category/CategoryIndex');
-const FollowRouter=require('./Components/Movie/Follow/Follow');
 const DonateHistoryRouter =require('./Components/Donate/History');
 const AdminDonateRouter =require('./Components/Admin/Donate/DonateIndex');
 
@@ -60,7 +59,6 @@ app.use('/api/admin/movie/', AdminMovieRouter);
 app.use('/api/admin/type/', AdminTypeRouter);
 app.use('/api/admin/category/', AdminCategoryRouter);
 app.use('/api/admin/donate/', AdminDonateRouter);
-app.use('/api/follow', FollowRouter);
 
 
 app.listen(port, () => {

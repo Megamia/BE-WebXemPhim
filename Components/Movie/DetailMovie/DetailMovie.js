@@ -33,21 +33,20 @@ router.post("/add/:movieId", authenticateToken, async (req, res) => {
   try {
     await dbConnection();
     const pool = await sql.connect(dbConnection);
-    const request = pool.request();
     const { movieId } = req.params;
-const parsedMovieId = parseInt(movieId, 10);
+// const parsedMovieId = parseInt(movieId, 10);
     const { userId } = req.user;
-    console.log("movieId: " + parsedMovieId);
+    console.log("movieId: " + movieId);
     console.log("userId: " + userId);
 
-    console.log("Lấy được movieid: " + parsedMovieId);
+    console.log("Lấy được movieid: " + movieId);
     const insertQuery = `
-  INSERT INTO List_Follow (movieid, userid) VALUES ('${parsedMovieId}', '${userId}');
+  INSERT INTO List_Follow (movieid, userid) VALUES ('${movieId}', '${userId}');
 `;
 
     await pool.request().query(insertQuery);
-
-    res.status(200).json({ message: "Insert successful" });
+    isFollow = true;
+    res.status(200).json({ message: "Insert successful",isFollow });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error connecting to SQL Server" });
@@ -58,15 +57,14 @@ router.post("/del/:movieId", authenticateToken, async (req, res) => {
   try {
     await dbConnection();
     const pool = await sql.connect(dbConnection);
-    const request = pool.request();
     const { movieId } = req.params;
     const { userId } = req.user;
     const deleteQuery = `
   DELETE FROM List_Follow WHERE movieid = '${movieId}' AND userid = '${userId}';
 `;
     await pool.request().query(deleteQuery);
-
-    res.status(200).json({ message: "Delete successful" });
+    isFollow = false;
+    res.status(200).json({ message: "Delete successful",isFollow });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error connecting to SQL Server" });
@@ -79,18 +77,20 @@ router.get("/check/:movieId", authenticateToken, async (req, res) => {
     const pool = await sql.connect(dbConnection);
     const { movieId } = req.params;
     const { userId } = req.user;
-    
     const checkQuery = `
-      SELECT * FROM List_Follow WHERE movieid = '${movieId}' AND userid = '${userId}';
+      SELECT * FROM List_Follow  WHERE movieid = '${movieId}' AND userid = '${userId}';
     `;
 
     const result = await pool.request().query(checkQuery);
 
     if (result.recordset.length > 0) {
-      res.status(200).json({ message: "Already!" });
+      isFollow = true;
+      res.status(200).json({ message: "Already!", isFollow });
     } else {
-      res.status(200).json({ message: "Not followed!" });
+      isFollow = false;
+      res.status(201).json({ message: "Not followed!", isFollow });
     }
+    
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error connecting to SQL Server" });
