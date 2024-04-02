@@ -1,2 +1,1 @@
-- cd tới file index.js
-- node index.js hoặc node <đường dẫn>
+-node index.js để chạy file
