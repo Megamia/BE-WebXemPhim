@@ -45,8 +45,11 @@ router.get("/:movieId", authenticateToken, async (req, res) => {
     const movieflResult = await request.query(queryMovieFL);
 
     const follow = movieflResult.recordset;
-
-    res.status(200).json({ data: follow });
+    if (follow.length > 0) {
+      res.status(200).json({ data: follow, isFollow: true });
+    } else {
+      res.status(201).json({ message: "Chưa follow", isFollow: false });
+    }
     // console.log(JSON.stringify(follow));
   } catch (error) {
     console.error(error);
@@ -54,26 +57,30 @@ router.get("/:movieId", authenticateToken, async (req, res) => {
   }
 });
 
-router.get("/",authenticateToken, async (req, res) => {
-    try {
-        await dbConnection();
-        const pool = await sql.connect(dbConnection);
-        const { userId } = req.user;
-        const result = await pool.request().query(`select * from List_Follow where userid=${userId}`);
-    
-        if (result.recordset.length > 0) {
-          const data = result.recordset;
-          res.json(data);
-        } else {
-          res.status(404).json({ error: "No movies found" });
-        }
-      } catch (error) {
-        console.error("Error retrieving movies:", error);
-        res
-          .status(500)
-          .json({ error: "An error occurred while retrieving users." });
-      }
+
+router.get("/", authenticateToken, async (req, res) => {
+  try {
+    const { userId } = req.user;
+    // console.log("Userid: " + userId);
+
+    await dbConnection();
+    const pool = await sql.connect(dbConnection);
+    const request = pool.request();
+    const result = await pool.request()
+      .query(`SELECT * FROM List_Follow WHERE userid = ${userId}`);
+
+    const follow = result.recordset;
+    if (follow.length > 0) {
+      res.status(200).json({ message: "Found movies", data: follow });
+    } else {
+      res.status(404).json({ error: "No movies found" });
+    }
+  } catch (error) {
+    console.error("Error retrieving movies:", error);
+    res.status(500).json({ error: "An error occurred while retrieving movies." });
+  }
 });
+
 
 router.post("/add/:movieId", authenticateToken, async (req, res) => {
   try {
