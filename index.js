@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const session = require('express-session');
 const { v4: uuidv4 } = require('uuid');
@@ -39,7 +40,10 @@ app.use(session({
 }));
 app.use(cors());
 app.use(express.json());
+const uploadPath = path.join(__dirname, 'upload');
 
+// Phục vụ tệp hình ảnh từ thư mục "upload"
+app.use('/upload', express.static(uploadPath));
 app.use('/api/login', loginRouter);
 app.use('/api/signup', signupRouter);
 app.use('/api/profile', profileRouter);

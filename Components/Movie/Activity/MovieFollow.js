@@ -67,7 +67,18 @@ router.get("/", authenticateToken, async (req, res) => {
     const pool = await sql.connect(dbConnection);
     const request = pool.request();
     const result = await pool.request()
-      .query(`SELECT * FROM List_Follow WHERE userid = ${userId}`);
+      .query(`
+      SELECT m.movieid,m.moviename, m.views,m.poster,v.videoname,
+      (SELECT CAST(AVG(value) AS DECIMAL(10, 1)) FROM Rating WHERE movieid = m.movieid) AS average_rating
+      FROM Movie m
+      INNER JOIN List_Follow lf ON lf.movieid = m.movieid
+      JOIN (
+        SELECT v.movieid, MAX(v.dateupload) AS max_dateupload
+        FROM Video v
+             GROUP BY v.movieid
+      ) AS subquery ON m.movieid = subquery.movieid
+      JOIN Video v ON v.movieid = m.movieid AND v.dateupload = subquery.max_dateupload
+      WHERE lf.userid = ${userId}`);
 
     const follow = result.recordset;
     if (follow.length > 0) {
