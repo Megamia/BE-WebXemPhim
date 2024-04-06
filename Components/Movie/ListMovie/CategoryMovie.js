@@ -28,12 +28,12 @@ router.get("/:categoryUrl", async (req, res) => {
         FROM Movie m
         INNER JOIN list_category lc ON lc.movieid = m.movieid
         INNER JOIN category c ON c.categoryid = lc.categoryid
-        JOIN (
+        LEFT JOIN (
         SELECT v.movieid, MAX(v.dateupload) AS max_dateupload
         FROM Video v
         GROUP BY v.movieid
         ) AS subquery ON m.movieid = subquery.movieid
-        JOIN Video v ON v.movieid = m.movieid AND v.dateupload = subquery.max_dateupload
+        LEFT JOIN Video v ON v.movieid = m.movieid AND v.dateupload = subquery.max_dateupload
         WHERE c.categoryurl = @categoryUrl
         `;
     request.input("categoryUrl", sql.NVarChar, categoryUrl);
