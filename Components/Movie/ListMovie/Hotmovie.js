@@ -12,13 +12,13 @@ router.get("/", async (req, res) => {
     SELECT TOP 8 m.movieid, m.moviename, m.views, m.background, m.moviedescribe, m.author, m.release_year, m.movieurl, m.poster, v.videoname,
     (SELECT CAST(AVG(value) AS DECIMAL(10, 1)) FROM Rating WHERE movieid = m.movieid) AS average_rating
     FROM Movie m
-    JOIN (
+    LEFT JOIN (
       SELECT v.movieid, MAX(v.dateupload) AS max_dateupload
       FROM Video v
       WHERE v.dateupload <= GETDATE()
       GROUP BY v.movieid
   ) AS subquery ON m.movieid = subquery.movieid
-    JOIN Video v ON v.movieid = m.movieid AND v.dateupload = subquery.max_dateupload
+    LEFT JOIN Video v ON v.movieid = m.movieid AND v.dateupload = subquery.max_dateupload
     ORDER BY m.views DESC
     `;
     const queryType = `
