@@ -24,6 +24,7 @@ const DonateHistoryRouter = require("./Components/Donate/History");
 const AdminDonateRouter = require("./Components/Admin/Donate/DonateIndex");
 const FollowRouter = require("./Components/Movie/Activity/MovieFollow");
 const AdminVideoRouter = require("./Components/Admin/Movie/VideoIndex");
+const ComingSoonRouter = require("./Components/Movie/ListMovie/ComingSoon");
 const app = express();
 const port = 4000;
 
@@ -63,6 +64,7 @@ app.use("/api/find", FindRouter);
 app.use("/api/follow", FollowRouter);
 app.use("/api/rating/", RatingRouter);
 app.use("/api/noi-bat/", hotmovieRouter);
+app.use("/api/sap-chieu/", ComingSoonRouter);
 app.use("/api/admin/movie/", AdminMovieRouter);
 app.use("/api/admin/type/", AdminTypeRouter);
 app.use("/api/admin/category/", AdminCategoryRouter);
