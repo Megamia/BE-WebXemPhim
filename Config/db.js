@@ -1,7 +1,9 @@
 const db = {
   user: 'sa',
   password: 'sa',
-  server: '26.227.56.79',
+  // server: '26.150.181.207', // DESKTOP-DU2RDFE
+  server: '26.138.51.32',   // DESKTOP-8F687F2
+  // server: '26.227.56.79',   // VIETANH
   database: 'WebXemPhim',
   port: 1433,
   options: {
@@ -11,7 +13,3 @@ const db = {
 };
 
 module.exports = db;
-
-// DESKTOP-DU2RDFE: 26.150.181.207
-// DESKTOP-8F687F2: 26.138.51.32
-// VIETANH: 26.227.56.79

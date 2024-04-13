@@ -43,17 +43,26 @@ router.get("/", authenticateToken, async (req, res) => {
 
     if (result.recordset.length > 0) {
       const userInfoFromDB = result.recordset[0];
-      const isAdmin = userInfoFromDB["userid"] === 1;
+      const isAdmin = userInfoFromDB["userid"];
+      if(isAdmin===1)
+      {
+        res.status(200).json({
+          message: "User is Admin",
+          userInfo: { ...userInfoFromDB, userId: userInfoFromDB.userId, isAdmin },
+        });
+      }else{
+        res.status(201).json({
+          message: "User isn't Admin",
+          userInfo: { ...userInfoFromDB, userId: userInfoFromDB.userId },
+        });
+      }
       // console.log("Userid: "+userInfoFromDB['userid']);
       // if(isAdmin){
       //   console.log("IsAdmin");
       // }else{
       //   console.log("Not Admin");
       // }
-      res.status(200).json({
-        message: "User information has been retrieved successfully",
-        userInfo: { ...userInfoFromDB, userId: userInfoFromDB.userId, isAdmin },
-      });
+      
     } else {
       res.status(404).json({ message: "User not found" });
     }
