@@ -1,1 +1,1 @@
--node index.js để chạy file
+- npm start để chạy
