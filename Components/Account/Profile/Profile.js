@@ -43,8 +43,8 @@ router.get("/", authenticateToken, async (req, res) => {
 
     if (result.recordset.length > 0) {
       const userInfoFromDB = result.recordset[0];
-      const isAdmin = userInfoFromDB["userid"];
-      if(isAdmin===1)
+      const isAdmin = userInfoFromDB["role"];
+      if(isAdmin==='admin')
       {
         res.status(200).json({
           message: "User is Admin",

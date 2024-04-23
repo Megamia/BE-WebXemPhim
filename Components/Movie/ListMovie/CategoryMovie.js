@@ -23,7 +23,7 @@ router.get("/:categoryUrl", async (req, res) => {
     // WHERE c.categoryurl = @categoryUrl
     // `;
     const query = `
-        SELECT m.movieid, m.moviename, m.views, m.poster, v.videoname,
+        SELECT m.movieid, m.moviename, m.views, m.poster, v.videoname, m.movieurl,
         (SELECT CAST(AVG(value) AS DECIMAL(10, 1)) FROM Rating WHERE movieid = m.movieid) AS average_rating
         FROM Movie m
         INNER JOIN list_category lc ON lc.movieid = m.movieid

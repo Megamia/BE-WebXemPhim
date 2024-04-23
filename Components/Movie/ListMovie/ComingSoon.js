@@ -9,7 +9,7 @@ router.get("/", async (req, res) => {
     const pool = await sql.connect(dbConnection);
     const request = pool.request();
     const query = `
-    SELECT m.movieid, m.moviename, m.views, m.poster,
+    SELECT m.movieid, m.moviename, m.views, m.poster, m.movieurl,
     (SELECT CAST(AVG(value) AS DECIMAL(10, 1)) FROM Rating WHERE movieid = m.movieid) AS average_rating
     FROM Movie m
     WHERE NOT EXISTS (SELECT 1 FROM Video v WHERE v.movieid = m.movieid);
