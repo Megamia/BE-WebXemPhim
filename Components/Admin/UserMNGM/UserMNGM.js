@@ -54,4 +54,46 @@ router.delete("/:userId", async (req, res) => {
   }
 });
 
+router.post("/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    await dbConnection();
+
+    const pool = await sql.connect(dbConnection);
+
+    const result = await pool
+      .request()
+      .input("userId", sql.Int, userId)
+      .query(`SELECT role FROM Users WHERE UserId = @userId`);
+    // console.log("Data: " + userId + ", " + result);
+    if (result.recordset.length > 0) {
+      const roleFromDB = result.recordset[0];
+      const role = roleFromDB["role"];
+      if (role === "admin") {
+        const swapAdmin = await pool
+          .request()
+          .input("userId", sql.Int, userId)
+          .query(`UPDATE Users SET role = 'user' WHERE UserId = @userId`);
+      } else if (role === "user") {
+        const swapUser = await pool
+          .request()
+          .input("userId", sql.Int, userId)
+          .query(`UPDATE Users SET role = 'admin' WHERE UserId = @userId`);
+      }
+
+      res.json({ message: "Update role successfully" });
+    } else {
+      res.status(404).json({ error: "User not found" });
+    }
+  } catch (error) {
+    console.error("Error to update role:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while deleting the user." });
+  } finally {
+    sql.close();
+  }
+});
+
 module.exports = router;
