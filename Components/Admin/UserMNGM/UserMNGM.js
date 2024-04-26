@@ -70,16 +70,16 @@ router.post("/:userId", async (req, res) => {
     if (result.recordset.length > 0) {
       const roleFromDB = result.recordset[0];
       const role = roleFromDB["role"];
-      if (role === "admin") {
+      if (role === "user") {
         const swapAdmin = await pool
           .request()
           .input("userId", sql.Int, userId)
-          .query(`UPDATE Users SET role = 'user' WHERE UserId = @userId`);
-      } else if (role === "user") {
+          .query(`UPDATE Users SET role = 'admin' WHERE UserId = @userId`);
+      } else {
         const swapUser = await pool
           .request()
           .input("userId", sql.Int, userId)
-          .query(`UPDATE Users SET role = 'admin' WHERE UserId = @userId`);
+          .query(`UPDATE Users SET role = 'user' WHERE UserId = @userId`);
       }
 
       res.json({ message: "Update role successfully" });
