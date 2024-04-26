@@ -12,7 +12,8 @@ router.get("/:movieId", async (req, res) => {
     // console.log("movieId: " + movieId);
     const queryMovie = `
       SELECT m.*, 
-      (SELECT COUNT(*) FROM List_Follow f WHERE f.movieid = m.movieid) AS count_follow 
+      (SELECT COUNT(*) FROM List_Follow f WHERE f.movieid = m.movieid) AS count_follow,
+      (SELECT count(*) FROM Video v WHERE v.movieid = m.movieid) AS count_video
       FROM Movie m 
       WHERE m.movieid = ${movieId};
     `;
