@@ -33,4 +33,37 @@ ORDER BY ABS(DATEDIFF(MINUTE, subquery.max_dateupload, GETDATE())) ASC;
   }
 });
 
+router.get("/details/:movieId", async (req, res) => {
+  try {
+    await dbConnection();
+
+    const pool = await sql.connect(dbConnection);
+    const request = pool.request();
+
+    const movieId = req.params.movieId; 
+    // console.log(movieId);
+    const query = `
+      SELECT m.*, avg_rating.average_rating, t.typename
+      FROM Movie m
+      LEFT JOIN (
+        SELECT movieid, AVG(value) AS average_rating
+        FROM Rating
+        GROUP BY movieid
+      ) avg_rating ON m.movieid = avg_rating.movieid
+      JOIN List_type lt ON m.movieid = lt.movieid
+      JOIN Type t ON lt.typeid = t.typeid
+      WHERE m.movieid = @movieId
+    `;
+
+    const result = await request
+      .input("movieId", sql.Int, movieId)
+      .query(query);
+
+    const dataMovie = result.recordset;
+    res.status(200).json({ dataMovie: dataMovie });
+  } catch (error) {
+    res.status(500).json({ message: "Error connecting to SQL Server" });
+  }
+});
+
 module.exports = router;
