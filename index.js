@@ -25,6 +25,8 @@ const AdminDonateRouter = require("./Components/Admin/Donate/DonateIndex");
 const FollowRouter = require("./Components/Movie/Activity/MovieFollow");
 const AdminVideoRouter = require("./Components/Admin/Movie/VideoIndex");
 const ComingSoonRouter = require("./Components/Movie/ListMovie/ComingSoon");
+const ToprankRouter = require("./Components/Movie/ListMovie/TopRank");
+
 const app = express();
 const port = 4000;
 
@@ -71,6 +73,7 @@ app.use("/api/admin/type/", AdminTypeRouter);
 app.use("/api/admin/category/", AdminCategoryRouter);
 app.use("/api/admin/donate/", AdminDonateRouter);
 app.use("/api/admin/video/", AdminVideoRouter);
+app.use("/api/toprank/", ToprankRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
